@@ -1,0 +1,33 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencies / build artifacts
+node_modules/
+dist/
+build/
+.cache/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# Project-specific — never commit
+# Real employee/department data; each install generates its own
+departments.csv
+
+# Test fixtures (do not commit work-hour exports)
+test-fixture.xlsx
+*_Work_Hours_*.xlsx

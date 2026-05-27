@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADAudit Work Hours Viewer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-row">
+      <h1>ADAudit Work Hours Viewer</h1>
+      <div id="meta" class="meta"></div>
+    </div>
+    <div class="header-row dept-bar">
+      <span id="dept-status" class="dept-status">Departments: not loaded</span>
+      <label class="dept-link">
+        Update from .csv
+        <input type="file" id="dept-input" accept=".csv">
+      </label>
+      <a href="#" id="dept-template" class="dept-link">Download template</a>
+      <a href="#" id="dept-clear" class="dept-link danger">Clear</a>
+    </div>
+  </header>
+
+  <section id="drop-zone" class="drop-zone">
+    <div class="drop-icon">&#x2191;</div>
+    <p class="drop-title">Drop a file here, or <label class="file-link">browse<input type="file" id="file-input" accept=".xlsx,.xlsm,.csv"></label></p>
+
+    <div class="file-types">
+      <div class="file-type-card">
+        <div class="ft-badge ft-badge-xlsx">.xlsx</div>
+        <div class="ft-body">
+          <strong>Work Hours export</strong>
+          <p>The "User Work Hours" report exported from ADAudit Plus. Any filename ending in <code>.xlsx</code> is fine (the ADAudit default like <code>User_Work_Hours_1779819054422_1.xlsx</code> works as-is).</p>
+        </div>
+      </div>
+      <div class="file-type-card">
+        <div class="ft-badge ft-badge-csv">.csv</div>
+        <div class="ft-body">
+          <strong>Department mapping</strong>
+          <p>Save as <code>departments.csv</code>. Two columns &mdash; <code>username,department</code> &mdash; with an optional header row.</p>
+          <pre class="ft-example">username,department
+ageiger,IT
+akerr,Accounting
+amoreno,Sales</pre>
+          <p class="ft-foot">Use <a href="#" id="dept-template-inline" class="dept-link">Download template</a> to get a pre-filled CSV based on the users in your current file.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="hint">Both files are parsed entirely in your browser. Departments persist across launches via browser storage. The work-hours file is re-loaded each time.</p>
+  </section>
+
+  <section id="stats-strip" class="stats-strip hidden">
+    <button class="stat-card" data-target="overview" type="button">
+      <span class="stat-num" id="stat-users">0</span>
+      <span class="stat-label">Users</span>
+    </button>
+    <button class="stat-card" data-target="earned" type="button">
+      <span class="stat-num" id="stat-earned"><span class="stat-icon">&#9733;</span> 0</span>
+      <span class="stat-label">Earned Half-Day</span>
+    </button>
+    <button class="stat-card warn" data-target="attention" data-group="short" type="button">
+      <span class="stat-num" id="stat-short">0</span>
+      <span class="stat-label">Short Mon&ndash;Thu</span>
+    </button>
+    <button class="stat-card danger" data-target="attention" data-group="fri" type="button">
+      <span class="stat-num" id="stat-failed">0</span>
+      <span class="stat-label">Failed Half-Day</span>
+    </button>
+  </section>
+
+  <nav id="tabs" class="tabs hidden" role="tablist">
+    <button class="tab active" role="tab" data-tab="overview" type="button">Overview</button>
+    <button class="tab" role="tab" data-tab="attention" type="button">
+      Needs Attention <span id="tab-attention-badge" class="tab-badge">0</span>
+    </button>
+    <button class="tab" role="tab" data-tab="earned" type="button">
+      Earned Half-Day <span id="tab-earned-badge" class="tab-badge">0</span>
+    </button>
+  </nav>
+
+  <section id="tab-overview" class="tab-pane active" role="tabpanel">
+    <div id="top10" class="top10 hidden">
+      <h2 class="top10-title">Top 10 &mdash; Weekly Total Hours</h2>
+      <ol id="top10-list" class="top10-list"></ol>
+    </div>
+
+    <div id="controls" class="controls hidden">
+      <label class="ctrl">
+        <span>Sort by</span>
+        <select id="sort-by">
+          <option value="user">User (A-Z)</option>
+          <option value="dept">Department, then User</option>
+          <option value="dept-total-desc">Department, then Total (high to low)</option>
+          <option value="active-desc">Weekly Active (high to low)</option>
+          <option value="active-asc">Weekly Active (low to high)</option>
+          <option value="idle-desc">Weekly Idle (high to low)</option>
+          <option value="total-desc">Weekly Total (high to low)</option>
+        </select>
+      </label>
+      <label class="ctrl">
+        <span>Filter</span>
+        <input type="text" id="filter" placeholder="username...">
+      </label>
+      <div class="grow"></div>
+      <button id="export-csv" class="btn">Export CSV</button>
+      <button id="clear" class="btn ghost">Clear</button>
+    </div>
+
+    <div id="table-wrap" class="table-wrap hidden">
+      <table id="table">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="tab-attention" class="tab-pane" role="tabpanel">
+    <div id="attention-content" class="attention-content"></div>
+  </section>
+
+  <section id="tab-earned" class="tab-pane" role="tabpanel">
+    <div id="earned-content" class="earned-content"></div>
+  </section>
+
+  <script src="vendor/xlsx.full.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
