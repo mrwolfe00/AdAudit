@@ -1,0 +1,25 @@
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.local.yml
+docker-compose.dev.yml
+docker-compose.prod.yml
+compose.yml
+.git
+.github
+.gitignore
+.gitattributes
+.vscode
+.idea
+node_modules
+npm-debug.log
+README.md
+DEPLOY.md
+Update-Departments.ps1
+.env
+.env.local
+.env.*.local
+# never bake employee data into the image
+departments.csv
+*_Work_Hours_*.xlsx
+test-fixture.xlsx

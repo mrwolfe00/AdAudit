@@ -1,0 +1,30 @@
+name: adaudit
+
+services:
+  adaudit-web:
+    container_name: adaudit-web
+    build:
+      context: .
+    image: adaudit-web:latest
+    restart: unless-stopped
+    networks:
+      - default
+      - traefik_net
+    # To enable auto-load of departments.csv on the dev host:
+    #   1. Touch the file first:  touch /srv/docker/stacks/dev-apps/adaudit/departments.csv
+    #   2. Uncomment the volume below
+    #   3. Set up scp from a domain-joined Windows box running Update-Departments.ps1
+    #      on a schedule, OR write a Bash/Python equivalent that runs on this host
+    # volumes:
+    #   - ./departments.csv:/usr/share/nginx/html/departments.csv:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_net"
+      - "traefik.http.routers.adaudit.rule=Host(`adaudit.mmgapts.com`)"
+      - "traefik.http.routers.adaudit.entrypoints=https"
+      - "traefik.http.routers.adaudit.tls=true"
+      - "traefik.http.services.adaudit.loadbalancer.server.port=80"
+
+networks:
+  traefik_net:
+    external: true

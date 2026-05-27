@@ -3,6 +3,46 @@
 This tool is a folder of static files &mdash; no backend, no database, no
 install. Anyone with the folder + a domain-joined Windows machine can run it.
 
+**Production location (dev environment):** https://adaudit.mmgapts.com
+
+---
+
+## Option 0 &mdash; The dev environment (already wired up)
+
+`main` auto-deploys to the company dev box via GitHub Actions. The flow mirrors
+`flh-founders`:
+
+- Docker image &mdash; `Dockerfile` (nginx serving the static folder)
+- nginx config &mdash; `nginx.conf` (gzip, security headers, departments.csv = no-cache)
+- Compose stack &mdash; `docker-compose.dev.yml`, routed by Traefik to
+  `adaudit.mmgapts.com`
+- Workflows &mdash; `.github/workflows/update-dev.yml` (auto on push to `main`),
+  `deploy-dev.yml` (manual full deploy)
+
+**One-time setup on the repo:** the workflows need these GitHub Secrets
+(same names flh-founders uses): `DEV_HOST`, `DEV_USER`, `DEV_SSH_KEY`,
+`DEV_PORT`. If this repo is on a personal account rather than the org, copy
+the secrets across once.
+
+**One-time setup on the dev host:** the `arc-runner-dind` runner deploys to
+`/srv/docker/stacks/dev-apps/adaudit/`. Traefik picks up the route from the
+Docker labels automatically &mdash; no DNS work as long as `*.mmgapts.com` already
+resolves to the dev box.
+
+**To enable AD auto-load of departments on the dev URL:**
+
+```bash
+# on the dev host
+cd /srv/docker/stacks/dev-apps/adaudit
+touch departments.csv
+
+# uncomment the `volumes:` block in docker-compose.dev.yml
+docker compose -f docker-compose.dev.yml up -d --no-deps adaudit-web
+
+# set up a job that scps the AD-generated CSV onto this host, e.g.
+# from a domain-joined Windows server running Update-Departments.ps1 weekly.
+```
+
 ---
 
 ## Option 1 &mdash; Copy to their machine (simplest)

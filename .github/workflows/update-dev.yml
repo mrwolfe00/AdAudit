@@ -1,0 +1,43 @@
+name: Update ADAudit Tool Web (Dev)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  update-web:
+    runs-on: arc-runner-dind
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Copy files to dev server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEV_HOST }}
+          username: ${{ secrets.DEV_USER }}
+          key: ${{ secrets.DEV_SSH_KEY }}
+          port: ${{ secrets.DEV_PORT }}
+          source: "."
+          target: "/srv/docker/stacks/dev-apps/adaudit"
+          strip_components: 0
+          rm: false
+
+      - name: Update web container ONLY
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEV_HOST }}
+          username: ${{ secrets.DEV_USER }}
+          key: ${{ secrets.DEV_SSH_KEY }}
+          port: ${{ secrets.DEV_PORT }}
+          script: |
+            cd /srv/docker/stacks/dev-apps/adaudit
+
+            # Rebuild ONLY the web image
+            docker compose -f docker-compose.dev.yml build adaudit-web
+
+            # Restart ONLY the web container (no deps)
+            docker compose -f docker-compose.dev.yml up -d --no-deps adaudit-web
