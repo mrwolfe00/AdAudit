@@ -3,7 +3,7 @@
 This tool is a folder of static files &mdash; no backend, no database, no
 install. Anyone with the folder + a domain-joined Windows machine can run it.
 
-**Production location (dev environment):** https://adaudit.mmgapts.com
+**Production location (dev environment):** https://summer.mmgapts.com
 
 ---
 
@@ -15,7 +15,7 @@ install. Anyone with the folder + a domain-joined Windows machine can run it.
 - Docker image &mdash; `Dockerfile` (nginx serving the static folder)
 - nginx config &mdash; `nginx.conf` (gzip, security headers, departments.csv = no-cache)
 - Compose stack &mdash; `docker-compose.dev.yml`, routed by Traefik to
-  `adaudit.mmgapts.com`
+  `summer.mmgapts.com`
 - Workflows &mdash; `.github/workflows/update-dev.yml` (auto on push to `main`),
   `deploy-dev.yml` (manual full deploy)
 

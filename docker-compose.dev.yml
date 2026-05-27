@@ -20,7 +20,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik_net"
-      - "traefik.http.routers.adaudit.rule=Host(`adaudit.mmgapts.com`)"
+      - "traefik.http.routers.adaudit.rule=Host(`summer.mmgapts.com`)"
       - "traefik.http.routers.adaudit.entrypoints=https"
       - "traefik.http.routers.adaudit.tls=true"
       - "traefik.http.services.adaudit.loadbalancer.server.port=80"
